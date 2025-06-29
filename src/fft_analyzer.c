@@ -140,10 +140,15 @@ void fft_analyzer_run_analysis(void) {
     for (int i = 0; i < N_SAMPLES; i++) dc_offset += (float)adc_samples[i];
     dc_offset /= N_SAMPLES;
 
+    // testando janelamento
     for (int i = 0; i < N_SAMPLES; i++) {
-        fft_buffer[i].real = (float)adc_samples[i] - dc_offset;
+        
+        float window_multiplier = 0.5f * (1.0f - cosf(2.0f * M_PI * i / (N_SAMPLES - 1)));
+        
+        fft_buffer[i].real = ((float)adc_samples[i] - dc_offset) * window_multiplier;
         fft_buffer[i].imag = 0.0f;
     }
+
 
     fft_in_place(fft_buffer, N_SAMPLES);
 
